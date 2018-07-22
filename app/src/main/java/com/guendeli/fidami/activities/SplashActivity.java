@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import com.guendeli.fidami.LoginActivity;
 import com.guendeli.fidami.R;
 
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends ActionBarActivity {
 
     protected ImageView animationImage;
 
