@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "799171053473",
+    "firebase_url": "https://fidami-97e80.firebaseio.com",
+    "project_id": "fidami-97e80",
+    "storage_bucket": "fidami-97e80.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:799171053473:android:c2504e1c5d022aa0",
+        "android_client_info": {
+          "package_name": "com.guendeli.fidami"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "799171053473-b6m87asnb5srqre21634b920373gjnsj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBftuumhFhuOAYGXaVYdEOR_teOA-8t8Dk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
