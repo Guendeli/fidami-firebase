@@ -88,16 +88,14 @@
                 android:textColor="@android:color/white"
                 android:background="@drawable/transparent_black_ten_percent"
                 android:text="@string/register" />
-
-            <Button
-                android:id="@+id/button_forgot_password"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:textColor="@android:color/white"
-                android:background="@drawable/transparent_black_ten_percent"
-                android:text="@string/forgot_password" />
-
         </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center|bottom"
+            android:layout_marginBottom="20dp"
+            android:visibility="gone" />
     </RelativeLayout>
 </ScrollView>

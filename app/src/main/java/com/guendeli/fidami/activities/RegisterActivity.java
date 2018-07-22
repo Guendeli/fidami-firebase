@@ -36,6 +36,7 @@ public class RegisterActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
 
         // adding registerbutton listener
+        registerButton.setOnClickListener(registerButtonListener);
     }
 
     private View.OnClickListener registerButtonListener = new View.OnClickListener(){
