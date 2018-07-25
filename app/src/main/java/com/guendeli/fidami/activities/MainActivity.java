@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.guendeli.fidami.LoginActivity;
 import com.guendeli.fidami.R;
 import com.guendeli.fidami.fragments.AchievementsFragment;
@@ -99,7 +100,7 @@ public class MainActivity extends ActionBarActivity
         builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //ParseUser.logOut();
+                FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(MainActivity.this, LoginActivity.class));
                 finish();
             }

@@ -12,10 +12,20 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FacebookAuthCredential;
+import com.google.firebase.auth.FirebaseUser;
 import com.guendeli.fidami.activities.MainActivity;
 import com.guendeli.fidami.activities.RegisterActivity;
 
@@ -26,6 +36,7 @@ public class LoginActivity extends AppCompatActivity {
 
     FirebaseAuth firebaseAuth;
 
+    CallbackManager mCallbackManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +48,6 @@ public class LoginActivity extends AppCompatActivity {
         registerButton = (Button)findViewById(R.id.button_register);
         // Login stuff, get the auth instance, if user is already logged in we move to main activity
         firebaseAuth = FirebaseAuth.getInstance();
-
         if(firebaseAuth.getCurrentUser() != null){
             // user is already logged in
             Log.e("Login", "User Already logged in, should move to somewhere else");
@@ -45,6 +55,31 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(loginIntent);
             finish();
         }
+
+        // Facebook boring crapo
+        // Initialize Facebook Login button
+        mCallbackManager = CallbackManager.Factory.create();
+        LoginButton loginButtonFb = findViewById(R.id.button_fb_login);
+        loginButtonFb.setReadPermissions("email", "public_profile");
+        loginButtonFb.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Log.d("FB Warning", "facebook:onSuccess:" + loginResult);
+                handleFacebookAccessToken(loginResult.getAccessToken());
+            }
+
+            @Override
+            public void onCancel() {
+                Log.d("FB Warning", "facebook:onCancel");
+                // ...
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Log.d("FB Error", "facebook:onError", error);
+                // ...
+            }
+        });
 
         // bind the register button intent
         registerButton.setOnClickListener(new View.OnClickListener() {
@@ -83,4 +118,42 @@ public class LoginActivity extends AppCompatActivity {
                     });
         }
     };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Pass the activity result back to the Facebook SDK
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void handleFacebookAccessToken(AccessToken token) {
+        Log.d("FB Warning", "handleFacebookAccessToken:" + token);
+
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        firebaseAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("Fb Warning", "signInWithCredential:success");
+                            FirebaseUser user = firebaseAuth.getCurrentUser();
+                            Intent loginIntent = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(loginIntent);
+                            finish();
+
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w("Fb Warning", "signInWithCredential:failure", task.getException());
+                            Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+
+                        }
+
+                        // ...
+                    }
+                });
+    }
+
 }

@@ -36,7 +36,7 @@
                 android:layout_marginBottom="25dp"
                 android:orientation="horizontal">
 
-                <ImageView
+                <com.facebook.login.widget.LoginButton
                     android:id="@+id/button_fb_login"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

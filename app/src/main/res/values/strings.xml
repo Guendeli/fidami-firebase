@@ -22,6 +22,7 @@
     <string name="twitter_login">Twitter login</string>
     <string name="fb_login">Facebook login</string>
     <string name="facebook_app_id">1598154943820156</string>
+    <string name="fb_login_protocol_scheme">fb1598154943820156</string>
     <string name="event_call_question">Will you attend the donation event in %1$s at %2$s? We need you blood type.</string>
     <string name="confirm_logout">Are you sure you want to log out?</string>
     <string name="name">Name</string>
