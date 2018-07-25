@@ -41,9 +41,9 @@ public class LoginActivity extends AppCompatActivity {
         if(firebaseAuth.getCurrentUser() != null){
             // user is already logged in
             Log.e("Login", "User Already logged in, should move to somewhere else");
-            //Intent loginIntent = new Intent(LoginActivity.this, MainActivity.class);
-            //startActivity(loginIntent);
-            //finish();
+            Intent loginIntent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(loginIntent);
+            finish();
         }
 
         // bind the register button intent
@@ -73,9 +73,9 @@ public class LoginActivity extends AppCompatActivity {
                             if(task.isSuccessful()){
 
                                 Log.e("Login", "Login Success, should move to somewhere else");
-                                //Intent loginIntent = new Intent(LoginActivity.this, MainActivity.class);
-                                //startActivity(loginIntent);
-                                //finish();
+                                Intent loginIntent = new Intent(LoginActivity.this, MainActivity.class);
+                                startActivity(loginIntent);
+                                finish();
                             } else {
                                 Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
                             }

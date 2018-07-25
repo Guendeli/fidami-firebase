@@ -10,7 +10,7 @@
     android:clipToPadding="false"
     android:scrollbarStyle="outsideOverlay"
     android:background="@color/primary"
-    tools:context=".activities.SignInActivity">
+    tools:context=".LoginActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"

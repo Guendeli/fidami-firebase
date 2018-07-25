@@ -62,4 +62,6 @@
     <string name="liters_to_free_ticket">POINTS</string>
     <string name="only_donors">Only donors can use this app.</string>
     <string name="continue_">Continue</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
