@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 
 import com.guendeli.fidami.LoginActivity;
 import com.guendeli.fidami.R;
+import com.guendeli.fidami.fragments.AchievementsFragment;
 import com.guendeli.fidami.fragments.ProfileFragment;
 import com.guendeli.fidami.fragments.ProfileOverviewFragment;
 import com.guendeli.fidami.models.MenuItem;
@@ -80,9 +81,9 @@ public class MainActivity extends ActionBarActivity
                             .commit();
                     break;
                 case R.string.menu_achievements:
-                    /*fragmentManager.beginTransaction()
+                    fragmentManager.beginTransaction()
                             .replace(R.id.container, new AchievementsFragment())
-                            .commit();*/
+                            .commit();
                     break;
                 case R.string.menu_logout:
                     showLogoutConfirmation();

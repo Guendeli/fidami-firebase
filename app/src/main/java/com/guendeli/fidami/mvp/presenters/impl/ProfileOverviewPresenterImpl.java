@@ -44,6 +44,15 @@ public class ProfileOverviewPresenterImpl implements ProfileOverviewPresenter {
 
         int achievementNum = 0;
 
+        if (value >= 15) {
+            achievementNum = 4;
+        } else if (value >= 10) {
+            achievementNum = 3;
+        } else if (value >= 5) {
+            achievementNum = 2;
+        } else if (value >= 1) {
+            achievementNum = 1;
+        }
         profileOverviewView.hideProgress();
         profileOverviewView.showData(decimalFormat.format(liters), String.valueOf(daysToNext),
                 String.valueOf(achievementNum), String.valueOf(points));
