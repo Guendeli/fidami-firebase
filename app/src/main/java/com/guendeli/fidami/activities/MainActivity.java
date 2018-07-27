@@ -1,6 +1,7 @@
 package com.guendeli.fidami.activities;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.app.FragmentManager;
@@ -17,6 +18,8 @@ import com.guendeli.fidami.fragments.AchievementsFragment;
 import com.guendeli.fidami.fragments.ProfileFragment;
 import com.guendeli.fidami.fragments.ProfileOverviewFragment;
 import com.guendeli.fidami.models.MenuItem;
+import com.guendeli.fidami.models.User;
+import com.guendeli.fidami.mvp.interactors.MyCommand;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,6 +35,7 @@ public class MainActivity extends ActionBarActivity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
+    private ProgressDialog progressDialog;
 
     @BindView(R.id.my_awesome_toolbar)
     protected Toolbar toolbar;
@@ -52,10 +56,23 @@ public class MainActivity extends ActionBarActivity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, new ProfileFragment())
-                .addToBackStack(null).commit();
+        User.getInstance().isUserNew(new MyCommand() {
+            @Override
+            public void execute(int value) {
+                if(value == 1){
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.container, new ProfileOverviewFragment())
+                            .addToBackStack(null).commit();
+                } else {
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.container, new ProfileFragment())
+                            .addToBackStack(null).commit();
+                }
+            }
+        });
+
     }
 
     @Override
@@ -114,5 +131,19 @@ public class MainActivity extends ActionBarActivity
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setTitle(mTitle);
+    }
+
+    public void showProgressBar() {
+        if (progressDialog == null || !progressDialog.isShowing() && !isFinishing()) {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage(getString(R.string.loading_message));
+            progressDialog.show();
+        }
+    }
+
+    public void hideProgressBar() {
+        if (progressDialog != null && progressDialog.isShowing() && !isFinishing()) {
+            progressDialog.dismiss();
+        }
     }
 }

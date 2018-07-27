@@ -17,6 +17,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.guendeli.fidami.LoginActivity;
 import com.guendeli.fidami.R;
+import com.guendeli.fidami.models.User;
+import com.guendeli.fidami.mvp.interactors.MyCommand;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -54,9 +56,14 @@ public class RegisterActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if(task.isSuccessful()){
                         // Complete
-                        Log.e("Register", "Register Complete");
-                        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-                        finish();
+                        User.getInstance().createNewUser(new MyCommand() {
+                            @Override
+                            public void execute(int value) {
+                                Log.e("Register", "Register Complete");
+                                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                                finish();
+                            }
+                        });
                     } else {
                         Toast.makeText(getApplicationContext(), "Email or password error", Toast.LENGTH_SHORT).show();
                     }

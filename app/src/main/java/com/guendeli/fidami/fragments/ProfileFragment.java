@@ -26,9 +26,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.guendeli.fidami.R;
 import com.guendeli.fidami.models.User;
+import com.guendeli.fidami.mvp.interactors.MyCommand;
 import com.guendeli.fidami.mvp.presenters.ProfilePresenter;
 import com.guendeli.fidami.mvp.presenters.impl.ProfilePresenterImpl;
 import com.guendeli.fidami.mvp.views.ProfileView;
+
+import java.util.concurrent.locks.Lock;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -88,66 +91,73 @@ public class ProfileFragment extends BaseFragment implements ProfileView {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         ButterKnife.bind(this, view);
-        boolean saved = this.getActivity().getSharedPreferences("prefs",Context.MODE_PRIVATE).getBoolean("saved", false);
-
-        if(saved){
-            // user already saved his profile so we might grab data from firebase
-            Log.e("Database"," Fetching database");
-            DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-            db.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-
-
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for(DataSnapshot postSnapshot : dataSnapshot.getChildren()){
-                        if(postSnapshot.getKey().equals(User.NAME)){
-                            inputName.setText((String)postSnapshot.getValue());
-                            inputName.setClickable(false);
-                            inputName.setFocusable(false);
-                            inputName.setTextColor(Color.parseColor("#b7b7b7"));
-                        } else if (postSnapshot.getKey().equals(User.SURNAME)){
-                            inputSurname.setText((String)postSnapshot.getValue());
-                            inputSurname.setClickable(false);
-                            inputSurname.setFocusable(false);
-                            inputSurname.setTextColor(Color.parseColor("#b7b7b7"));
-                        } else if (postSnapshot.getKey().equals(User.AGE)){
-                            inputAge.setText((String)postSnapshot.getValue());
-                            inputAge.setClickable(false);
-                            inputAge.setFocusable(false);
-                            inputAge.setTextColor(Color.parseColor("#b7b7b7"));
-                        } else if (postSnapshot.getKey().equals(User.WEIGHT)){
-                            inputWeight.setText((String)postSnapshot.getValue());
-                            inputWeight.setClickable(false);
-                            inputWeight.setFocusable(false);
-                            inputWeight.setTextColor(Color.parseColor("#b7b7b7"));
-                        } else if(postSnapshot.getKey().equals(User.SEX)){
-                            spinnerSex.setSelection(getSpinnerIndex(spinnerSex,(String)postSnapshot.getValue()));
-
-                        } else if(postSnapshot.getKey().equals(User.BLOOD_TYPE)){
-                            String bloodType = (String)postSnapshot.getValue();
-                            spinnerBloodType.setSelection(getSpinnerIndex(spinnerBloodType, removeLastChar(bloodType)));
-
-                            spinnerRh.setSelection(getSpinnerIndex(spinnerRh, bloodType.substring(bloodType.length()-1)));
-
-                        } else if(postSnapshot.getKey().equals(User.ADDRESS)){
-                            inputAddress.setText((String)postSnapshot.getValue());
-                        } else if (postSnapshot.getKey().equals(User.ADDITIONAL)){
-                            inputAdditional.setText((String)postSnapshot.getValue());
-                        }
-                    }
+        User.getInstance().isUserNew(new MyCommand() {
+            @Override
+            public void execute(int value) {
+                if(value == 1){
+                    // old user saved, should lock profile
+                    LockUser();
                 }
+            }
+        });
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Log.e("Databse Error: ", databaseError.toString());
-                    Toast.makeText(getActivity(),databaseError.toString(),Toast.LENGTH_SHORT).show();
-                }
-            });
-
-        }
 
         profilePresenter = new ProfilePresenterImpl(this);
         return view;
+    }
+
+    private void LockUser(){
+        Log.e("Database"," Fetching database");
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+        db.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot postSnapshot : dataSnapshot.getChildren()){
+                    if(postSnapshot.getKey().equals(User.NAME)){
+                        inputName.setText((String)postSnapshot.getValue());
+                        inputName.setClickable(false);
+                        inputName.setFocusable(false);
+                        inputName.setTextColor(Color.parseColor("#b7b7b7"));
+                    } else if (postSnapshot.getKey().equals(User.SURNAME)){
+                        inputSurname.setText((String)postSnapshot.getValue());
+                        inputSurname.setClickable(false);
+                        inputSurname.setFocusable(false);
+                        inputSurname.setTextColor(Color.parseColor("#b7b7b7"));
+                    } else if (postSnapshot.getKey().equals(User.AGE)){
+                        inputAge.setText((String)postSnapshot.getValue());
+                        inputAge.setClickable(false);
+                        inputAge.setFocusable(false);
+                        inputAge.setTextColor(Color.parseColor("#b7b7b7"));
+                    } else if (postSnapshot.getKey().equals(User.WEIGHT)){
+                        inputWeight.setText((String)postSnapshot.getValue());
+                        inputWeight.setClickable(false);
+                        inputWeight.setFocusable(false);
+                        inputWeight.setTextColor(Color.parseColor("#b7b7b7"));
+                    } else if(postSnapshot.getKey().equals(User.SEX)){
+                        spinnerSex.setSelection(getSpinnerIndex(spinnerSex,(String)postSnapshot.getValue()));
+
+                    } else if(postSnapshot.getKey().equals(User.BLOOD_TYPE)){
+                        String bloodType = (String)postSnapshot.getValue();
+                        spinnerBloodType.setSelection(getSpinnerIndex(spinnerBloodType, removeLastChar(bloodType)));
+
+                        spinnerRh.setSelection(getSpinnerIndex(spinnerRh, bloodType.substring(bloodType.length()-1)));
+
+                    } else if(postSnapshot.getKey().equals(User.ADDRESS)){
+                        inputAddress.setText((String)postSnapshot.getValue());
+                    } else if (postSnapshot.getKey().equals(User.ADDITIONAL)){
+                        inputAdditional.setText((String)postSnapshot.getValue());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("Databse Error: ", databaseError.toString());
+                Toast.makeText(getActivity(),databaseError.toString(),Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @OnClick(R.id.button_save)

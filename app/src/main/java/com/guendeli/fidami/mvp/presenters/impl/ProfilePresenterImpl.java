@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.guendeli.fidami.models.User;
+import com.guendeli.fidami.mvp.interactors.MyCommand;
 import com.guendeli.fidami.mvp.presenters.ProfilePresenter;
 import com.guendeli.fidami.mvp.views.ProfileView;
 
@@ -36,6 +37,14 @@ public class ProfilePresenterImpl implements ProfilePresenter {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReferenceFromUrl("https://fidami-97e80.firebaseio.com");
         if(user != null){
+
+            User.getInstance().getUserDonations(new MyCommand() {
+                @Override
+                public void execute(int value) {
+                    User.getInstance().donations = value;
+                }
+            });
+
             Map<String,String> map = new HashMap<String,String>();
             map.put(User.NAME,name);
             map.put(User.SURNAME, surname);
@@ -45,6 +54,8 @@ public class ProfilePresenterImpl implements ProfilePresenter {
             map.put(User.ADDITIONAL, additional);
             map.put(User.AGE, age);
             map.put(User.WEIGHT, weight);
+            map.put(User.USER_DONATION, String.valueOf(User.getInstance().donations));
+            map.put(User.USER_SAVED,"true");
             ref.child("users").child(user.getUid()).setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {

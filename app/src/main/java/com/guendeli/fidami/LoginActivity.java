@@ -26,8 +26,15 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FacebookAuthCredential;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.guendeli.fidami.activities.MainActivity;
 import com.guendeli.fidami.activities.RegisterActivity;
+import com.guendeli.fidami.models.User;
+import com.guendeli.fidami.mvp.interactors.MyCommand;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -139,10 +146,8 @@ public class LoginActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("Fb Warning", "signInWithCredential:success");
                             FirebaseUser user = firebaseAuth.getCurrentUser();
-                            Intent loginIntent = new Intent(LoginActivity.this, MainActivity.class);
-                            startActivity(loginIntent);
-                            finish();
-
+                            // we should check is User exists
+                            isUserExist(user);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("Fb Warning", "signInWithCredential:failure", task.getException());
@@ -154,6 +159,38 @@ public class LoginActivity extends AppCompatActivity {
                         // ...
                     }
                 });
+    }
+
+    private void isUserExist(final FirebaseUser user){
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+        db.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild(user.getUid())){
+                    // user already exists
+                    Intent loginIntent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(loginIntent);
+                    finish();
+                } else {
+                    // create new user and proceed
+                    User.getInstance().createNewUser(new MyCommand() {
+                        @Override
+                        public void execute(int value) {
+                            Log.e("Register", "Register Complete");
+                            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                            finish();
+                        }
+                    });
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
 }
